@@ -67,3 +67,29 @@ class Robot(abc.ABC):
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(name={self.name!r}, battery={self.battery!r})"
+
+def log_action(func):
+    """Decorator that logs entry/exit of a robot method, preserving identity."""
+
+    @functools.wraps(func)
+    def wrapper(self, *args, **kwargs):
+        logging.info(f"{self.name}: starting {func.__name__}")
+        result = func(self, *args, **kwargs)
+        logging.info(f"{self.name}: finished {func.__name__}")
+        return result
+
+    return wrapper
+
+
+class CleaningRobot(Robot):
+    """A robot that vacuums rooms."""
+
+    def __init__(self, name: str, battery: int = 100, dust_capacity: int = 500):
+        super().__init__(name, battery)
+        self.dust_capacity = dust_capacity
+
+    @log_action
+    def perform_task(self, **kwargs):
+        """Vacuum a room, consuming battery."""
+        self.use_battery(10)
+        return f"{self.name} vacuumed the room (capacity {self.dust_capacity}ml)."

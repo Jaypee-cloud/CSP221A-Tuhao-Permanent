@@ -180,3 +180,27 @@ def demonstrate_mutable_class_attribute_trap() -> None:
     print("fixed_a.entries:", fixed_a.entries)
     print("fixed_b.entries:", fixed_b.entries)
     print("Same object?", fixed_a.entries is fixed_b.entries)
+
+    
+def main() -> None:
+    roomba = CleaningRobot("Roomba", battery=100, dust_capacity=500)
+    drone = DroneRobot("Aqua-Drone", battery=15, max_altitude=200)
+    car = CarRobot("Speedy", battery=100, top_speed=80)
+
+    print(f"repr(roomba) -> {roomba!r}")
+    print(f"Robot.population -> {Robot.population}\n")
+
+    fleet_report([roomba, drone, car])
+    print()
+
+    run_task_safely(roomba)
+    run_task_safely(drone)
+    run_task_safely(drone)  # second flight should fail: not enough battery
+    run_task_safely(car)
+    print()
+
+    demonstrate_mutable_class_attribute_trap()
+
+
+if __name__ == "__main__":
+    main()

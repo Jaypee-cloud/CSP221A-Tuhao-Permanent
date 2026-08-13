@@ -137,3 +137,46 @@ def run_task_safely(robot: Robot, **kwargs):
         print(result)
     finally:
         print(f"{robot.name} battery is now {robot.battery}%.")
+
+# ---------------------------------------------------------------------------
+# 1.8 The Mutable Class Attribute Trap - standalone demonstration.
+# This is NOT part of the Robot hierarchy above; it's purely to show the bug.
+# ---------------------------------------------------------------------------
+
+class BuggyLogger:
+    """BUGGY: a list defined at class level is shared by every instance."""
+
+    entries = []  # <- lives on the class, not the instance
+
+    def log(self, message: str) -> None:
+        self.entries.append(message)
+
+
+class FixedLogger:
+    """FIXED: the list is created fresh in __init__, so it's per-instance."""
+
+    def __init__(self):
+        self.entries = []
+
+    def log(self, message: str) -> None:
+        self.entries.append(message)
+
+
+def demonstrate_mutable_class_attribute_trap() -> None:
+    print("--- Buggy version (shared list) ---")
+    buggy_a = BuggyLogger()
+    buggy_b = BuggyLogger()
+    buggy_a.log("a's message")
+    buggy_b.log("b's message")
+    print("buggy_a.entries:", buggy_a.entries)
+    print("buggy_b.entries:", buggy_b.entries)
+    print("Same object?", buggy_a.entries is buggy_b.entries)
+
+    print("\n--- Fixed version (per-instance list) ---")
+    fixed_a = FixedLogger()
+    fixed_b = FixedLogger()
+    fixed_a.log("a's message")
+    fixed_b.log("b's message")
+    print("fixed_a.entries:", fixed_a.entries)
+    print("fixed_b.entries:", fixed_b.entries)
+    print("Same object?", fixed_a.entries is fixed_b.entries)

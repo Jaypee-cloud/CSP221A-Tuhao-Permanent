@@ -93,3 +93,16 @@ class CleaningRobot(Robot):
         """Vacuum a room, consuming battery."""
         self.use_battery(10)
         return f"{self.name} vacuumed the room (capacity {self.dust_capacity}ml)."
+
+class DroneRobot(Robot):
+    """A robot that flies survey missions."""
+
+    def __init__(self, name: str, battery: int = 100, max_altitude: int = 120):
+        super().__init__(name, battery)
+        self.max_altitude = max_altitude
+
+    @log_action
+    def perform_task(self, **kwargs):
+        """Fly a survey pass, consuming battery."""
+        self.use_battery(25)
+        return f"{self.name} flew a survey pass up to {self.max_altitude}m."

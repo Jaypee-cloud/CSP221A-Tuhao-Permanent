@@ -44,7 +44,7 @@ class Robot(abc.ABC):
 
     @battery.setter
     def battery(self, value: int) -> None:
-    self._battery = value  # BUG: removed the max(0, min(100, value)) clamp
+        self._battery = max(0, min(100, value))
 
     def use_battery(self, amount: float) -> None:
         """Shared battery-spending logic used by every subclass's perform_task()."""

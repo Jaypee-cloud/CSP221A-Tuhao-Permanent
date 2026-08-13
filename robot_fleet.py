@@ -106,3 +106,34 @@ class DroneRobot(Robot):
         """Fly a survey pass, consuming battery."""
         self.use_battery(25)
         return f"{self.name} flew a survey pass up to {self.max_altitude}m."
+
+class CarRobot(Robot):
+    """A ground transport robot that navigates land routes."""
+
+    def __init__(self, name: str, battery: int = 100, top_speed: int = 60):
+        super().__init__(name, battery)
+        self.top_speed = top_speed
+
+    @log_action
+    def perform_task(self, **kwargs):
+        """Drive a delivery route, consuming battery."""
+        self.use_battery(15)
+        return f"{self.name} drove a delivery route at speeds up to {self.top_speed} km/h."
+
+
+def fleet_report(robots: list[Robot]) -> None:
+    """Print a status line for every robot without branching on subclass."""
+    for robot in robots:
+        print(str(robot))
+
+
+def run_task_safely(robot: Robot, **kwargs):
+    """Run a robot's task, handling InsufficientBatteryError gracefully."""
+    try:
+        result = robot.perform_task(**kwargs)
+    except InsufficientBatteryError as exc:
+        logging.error(str(exc))
+    else:
+        print(result)
+    finally:
+        print(f"{robot.name} battery is now {robot.battery}%.")
